@@ -1,0 +1,7 @@
+extends default 
+
+block content 
+	.home-search
+		img(src="/images/wf.png" width="180" height="180")
+		form(action='/search' method='GET')
+			input.home-input(autofocus='' placeholder='Search Weather Forecast' type='search' name='q')

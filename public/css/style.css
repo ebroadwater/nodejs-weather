@@ -1,0 +1,30 @@
+html{
+	box-sizing:border-box;
+}
+*, *::before, *::after{
+	margin:0;
+	padding:0;
+	box-sizing:inherit;
+}
+body{
+	background-color: aliceblue;
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.home-search{
+	text-align: center;
+	margin-top: 10%;
+}
+.home-search img{
+	margin-bottom: 20px;
+	width:25%;
+	height: 10%;
+}
+.home-input{
+	width:60%;
+	background-color: transparent;
+	border: solid 1px darkblue;
+	border-radius: 4px;
+	height: 40px;
+	padding: 10px;
+	color:darkblue;
+}
