@@ -1,0 +1,18 @@
+extends default
+
+block content 
+	header 
+		img(src="/images/wf.png" width="180" height="180")
+		a.logo(href='/') Real Time Weather Forecast 
+	
+	.container 
+		if !searchResults || !searchResults.results
+			.result-count 
+				p No results found for your query
+				|
+				strong #{searchQuery}
+		else 
+			ul.searchResults 
+				each place in searchResults.results
+					li.location 
+						p #{place.name} -- #{place.admin1}, #{place.country} -- (#{place.latitude}, #{place.longitude})
