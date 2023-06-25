@@ -14,7 +14,13 @@ app.get('/', (req,res) =>{
 //`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=10&language=en&format=json`
 async function searchLocation(query){
 	const response = await axios.get(
-		`https://geocoding-api.open-meteo.com/v1/search?name=Southbury`
+		`https://geocoding-api.open-meteo.com/v1/search?name=${query}`
+	);
+	return response.data;
+}
+async function searchWeather(lat, lon){
+	const response = await axios.get(
+		`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&hourly=relativehumidity_2m`
 	);
 	return response.data;
 }
@@ -36,7 +42,6 @@ Use API: https://open-meteo.com/en/docs/geocoding-api#name=06488
 4) Get JSON document from that URL 
 */
 
-
 app.get('/search', async (req,res) => {
 	try{
 		const searchQuery = req.query.q;
@@ -56,16 +61,18 @@ app.get('/search', async (req,res) => {
 	}
 });
 
-// app.get('/search', async (req, res) => {
-// 	const searchQuery = req.query.q;
-// 	if (!searchQuery) {
-// 	  res.redirect(302, '/');
-// 	  return;
-// 	}
-  
-// 	const results = await searchLocation(searchQuery);
-// 	res.status(200).json(results);
-//   });
+app.get('/weather', async (req, res) => {
+	const lat = req.query.lat;
+	const lon = req.query.lon;
+
+	if (!lat && !lon) {
+	  res.redirect(302, '/');
+	  return;
+	}
+	
+	const results = await searchWeather(lat, lon);
+	res.status(200).json(results);
+  });
 
 /*
 "Catch-all" error handler

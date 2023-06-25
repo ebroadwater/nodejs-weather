@@ -29,6 +29,7 @@ header{
 header img{
 	margin-bottom: 20px;
 	margin-top:10px;
+	margin-left:15px;
 	width:50px;
 	height: 40px;
 }
@@ -36,7 +37,7 @@ header img{
 	text-decoration: none;
 	font-size: 1.6em;
 	color: #6600cc;
-	margin-left:15px;
+	margin-left:10px;
 }
 .map{
 	display: flex;
@@ -58,6 +59,15 @@ header img{
 	position:absolute;
 	top:25%;
 	left:25%;
+	padding:10px;
+}
+h2{
+	position:absolute;
+	top:10%;
+}
+h4{
+	position:absolute;
+	top:16%;
 }
 iframe{
 	position: absolute;
@@ -69,8 +79,37 @@ iframe{
 	height: 100%;
 }
 .container{
-	display: flex;
+	width: 100%;
+	max-width: 1600px;
+	margin: 0 auto;
+	padding: 80px 20px 40px;
+}
+.searchResults{
+	display: grid;
+	grid-auto-rows: 1fr;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 30px;
+	list-style: none;
+}
+.location{
+	display:flex;
 	flex-direction: column;
-	position: absolute;
-	top: 20%;
+	border: 1px solid grey;
+	background-color: blanchedalmond;
+	margin:10px;
+	border-radius: 15px;
+	padding:10px;
+	width:1400;
+	text-align: center;
+}
+.name{
+	font-size: 1.4em;
+	/* color:#6600cc; */
+	color:#ff9900;
+	font-weight: bold;
+	text-decoration: none;
+	margin: 15px;
+}
+.coordinates{
+	color:#6600cc;
 }
