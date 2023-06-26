@@ -20,7 +20,8 @@ async function searchLocation(query){
 }
 async function searchWeather(lat, lon){
 	const response = await axios.get(
-		`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&hourly=relativehumidity_2m`
+		// `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&hourly=relativehumidity_2m`
+		`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=uv_index&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,uv_index_max,precipitation_sum,rain_sum,showers_sum,snowfall_sum,precipitation_hours,precipitation_probability_max,windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto`
 	);
 	return response.data;
 }
@@ -29,19 +30,6 @@ We've prefixed the callback function with the async keyword
 so that we may await the results from the searchWeather() method 
 before responding to the client request.
 */
-
-/*
-Need to get lat and lon of specific place
-Use API: https://open-meteo.com/en/docs/geocoding-api#name=06488
-*/
-/*
-1) Get latitude and longitude of location
-2) Get metadata from that location :  https://api.weather.gov/points/{lat},{lon}
-3) Find properties object inside JSON document, and inside that find the forecast property containing a URL
-	(can also get hourly forecast with forecastHourly property)
-4) Get JSON document from that URL 
-*/
-
 app.get('/search', async (req,res) => {
 	try{
 		const searchQuery = req.query.q;
@@ -61,18 +49,84 @@ app.get('/search', async (req,res) => {
 	}
 });
 
-app.get('/weather', async (req, res) => {
-	const lat = req.query.lat;
-	const lon = req.query.lon;
-
-	if (!lat && !lon) {
-	  res.redirect(302, '/');
-	  return;
+function getTime(){
+	var date = new Date();
+	var hrs = date.getHours();
+	var min = date.getMinutes();
+	var time = "AM";
+	if (hrs > 12){
+		hrs -= 12;
+		time = "PM";
 	}
-	
-	const results = await searchWeather(lat, lon);
-	res.status(200).json(results);
-  });
+	else if (hrs == 0){
+		hrs = 12;
+	}
+	if (min < 10){
+		min = "0" + min;
+	}
+	return hrs + ":" + min + " " + time;
+}
+
+app.get('/weather', async (req, res, next) => {
+	// const lat = req.query.lat;
+	// const lon = req.query.lon;
+
+	// if (!lat && !lon) {
+	//   res.redirect(302, '/');
+	//   return;
+	// }
+	// const results = await searchWeather(lat, lon);
+	// //res.status(200).json(results);
+	// res.status(200).json(results.hourly);
+
+
+	try{
+		const lat = req.query.lat;
+		const lon = req.query.lon;
+
+		if (!lat || !lon){
+			res.redirect(302, '/');
+			return;
+		}
+		const results = await searchWeather(lat, lon);
+		//const dateNow = new Date();
+		//const dateString = dateNow.getHours() + ":" + dateNow.getMinutes();
+		const dateString = getTime();
+
+		res.render('weather', {
+			title: 'Search results for: ${lat}, ${lon}',
+			searchResults: results,
+			//timezone: weather.timezone,
+			// elevation: results.elevation, 
+			// currentWeather: results.current_weather,
+			// hourlyUnits: results.hourly_units,
+			// hourly: results.hourly, 
+			// dailyUnits: results.daily_units, 
+			// daily: results.daily, 
+			date: dateString,
+		});
+	} catch(err){
+		next(err);
+	}
+
+
+	// try{
+	// 	const lat = req.query.lat;
+	// 	const lon = req.query.lon;
+	// 	if (!lat || !lon){
+	// 		res.redirect(302, '/');
+	// 		return;
+	// 	}
+	// 	const results = await searchWeather(lat, lon);
+	// 	//res.status(200).json(results);
+	// 	res.render('weather', {
+	// 		title: 'Search results for: ${searchQuery}',
+	// 		searchResults: results
+	// 	});
+	// } catch(err){
+	// 	next(err);
+	// }
+});
 
 /*
 "Catch-all" error handler

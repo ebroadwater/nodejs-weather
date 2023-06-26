@@ -113,3 +113,10 @@ iframe{
 .coordinates{
 	color:#6600cc;
 }
+/* .weather-container{
+	top:30%;
+} */
+.weatherResults{
+	top:50%;
+	position:absolute;
+}
