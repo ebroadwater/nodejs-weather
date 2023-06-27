@@ -4,8 +4,9 @@ block content
 	header
 		img(src="/images/wf.png" width="180" height="180")
 		a.logo(href='/') Real Time Weather Forecast 
-	
 	.map
+		h2 Search Location
+		h4 Enter city or zipcode 
 		form(action='/search' method='GET')
-			input.home-input(autofocus='' placeholder='Search Location' type='search' name='q')
+			input.home-input(autofocus='' placeholder='Search' type='search' name='q')
 		iframe(width='500' height='400' frameborder='0' src='https://www.bing.com/maps/embed?h=400&w=500&cp=41.03785697984043~-95.39139267567288&lvl=3.49&typ=d&sty=r&src=SHELL&FORM=MBEDV8' scrolling='no')
