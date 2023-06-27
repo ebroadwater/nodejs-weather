@@ -3,6 +3,39 @@ const path = require('path');
 const axios = require('axios');
 const app = express();
 
+const wc = new Map([
+	[0, "Clear sky"],
+	[1, "Mainly clear"],
+	[2, "Partly cloudy"],
+	[3, "Overcast"],
+	[45, "Fog"],
+	[48, "Depositing rime fog"],
+	[51, "Light drizzle"],
+	[53, "Moderate drizzle"],
+	[55, "Dense drizzle"], 
+	[56, "Light freezing drizzle"], 
+	[57, "Dense freezing drizzle"], 
+	[61, "Slight rain"], 
+	[63, "Moderate rain"], 
+	[65, "Heavy rain"], 
+	[66, "Light freezing rain"], 
+	[67, "Heavy freezing rain"], 
+	[71, "Slight snow fall"], 
+	[73, "Moderate snow fall"], 
+	[75, "Heavy snow fall"], 
+	[77, "Snow grains"], 
+	[80, "Slight rain showers"], 
+	[81, "Moderate rain showers"], 
+	[82, "Violent rain showers"], 
+	[85, "Slight snow showers"], 
+	[86, "Heavy snow showers"], 
+	[95, "Thunderstorm"], 
+	[96, "Thunderstorm with slight hail"], 
+	[99, "Thunderstorm with heavy hail"]
+]);
+var isNight = false;
+var location = "";
+
 app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -40,7 +73,7 @@ app.get('/search', async (req,res) => {
 		const results = await searchLocation(searchQuery);
 		//res.status(200).json(results);
 		res.render('search', {
-			title: 'Search results for: ${searchQuery}',
+			title: `Real Time Weather Forecast: ${searchQuery}`,
 			searchResults: results, 
 			searchQuery
 		});
@@ -54,6 +87,10 @@ function getTime(){
 	var hrs = date.getHours();
 	var min = date.getMinutes();
 	var time = "AM";
+
+	if (hrs > 17 || hrs < 5){
+		isNight = true;
+	}
 	if (hrs > 12){
 		hrs -= 12;
 		time = "PM";
@@ -66,20 +103,46 @@ function getTime(){
 	}
 	return hrs + ":" + min + " " + time;
 }
+function getImage(weathercode){
+	if (weathercode == 0){
+		if (isNight){
+			return "images/night-clear.png";
+		}
+		return "images/day-sunny.png";
+	}
+	else if (weathercode < 4){
+		return "images/cloudy.png";
+	}
+	else if (weathercode < 49){
+		return "images/fog.png";
+	}
+	else if (weathercode < 56){
+		return "images/sprinkle.png";
+	}
+	else if (weathercode < 66){
+		return "images/rain.png";
+	}
+	else if (weathercode < 68){
+		return "images/rain-mix.png";
+	}
+	else if (weathercode < 78){
+		return "images/snow.png";
+	}
+	else if (weathercode < 83){
+		return "images/showers.png";
+	}
+	else if (weathercode < 87){
+		return "images/snow.png";
+	}
+	else if (weathercode == 95){
+		return "images/thunderstorm.png";
+	}
+	else if (weathercode < 100){
+		return "images/storm-showers.png";
+	}
+}
 
 app.get('/weather', async (req, res, next) => {
-	// const lat = req.query.lat;
-	// const lon = req.query.lon;
-
-	// if (!lat && !lon) {
-	//   res.redirect(302, '/');
-	//   return;
-	// }
-	// const results = await searchWeather(lat, lon);
-	// //res.status(200).json(results);
-	// res.status(200).json(results.hourly);
-
-
 	try{
 		const lat = req.query.lat;
 		const lon = req.query.lon;
@@ -89,43 +152,20 @@ app.get('/weather', async (req, res, next) => {
 			return;
 		}
 		const results = await searchWeather(lat, lon);
-		//const dateNow = new Date();
-		//const dateString = dateNow.getHours() + ":" + dateNow.getMinutes();
 		const dateString = getTime();
-
+		const weatherCode = wc.get(results.current_weather.weathercode);
+		const img = getImage(results.current_weather.weathercode);
 		res.render('weather', {
-			title: 'Search results for: ${lat}, ${lon}',
+			title: 'Real Time Weather Forecast',
 			searchResults: results,
-			//timezone: weather.timezone,
-			// elevation: results.elevation, 
-			// currentWeather: results.current_weather,
-			// hourlyUnits: results.hourly_units,
-			// hourly: results.hourly, 
-			// dailyUnits: results.daily_units, 
-			// daily: results.daily, 
 			date: dateString,
+			weathercode: weatherCode, 
+			weatherImage:img,
+			searchLocation: req.query.n
 		});
 	} catch(err){
 		next(err);
 	}
-
-
-	// try{
-	// 	const lat = req.query.lat;
-	// 	const lon = req.query.lon;
-	// 	if (!lat || !lon){
-	// 		res.redirect(302, '/');
-	// 		return;
-	// 	}
-	// 	const results = await searchWeather(lat, lon);
-	// 	//res.status(200).json(results);
-	// 	res.render('weather', {
-	// 		title: 'Search results for: ${searchQuery}',
-	// 		searchResults: results
-	// 	});
-	// } catch(err){
-	// 	next(err);
-	// }
 });
 
 /*
