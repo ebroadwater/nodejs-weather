@@ -1,0 +1,98 @@
+extends default 
+
+block content 
+	header 
+		img(src="/images/wf.png" width="180" height="180")
+		a.logo(href='/') Real Time Weather Forecast
+	
+	.weather-container 
+		h1 #{searchLocation}, #{searchLocationSecond}: 
+		h1.date-title #{dateTitle}
+		if !searchResults
+			.result-count 
+				p No results found for your query
+		else 
+			ul.dailyResults 
+				- for (var i = startIndex; i < 24; i++){
+					li.day-card
+						p.daily-date #{hours[i]}
+						.daily-info-container 
+							.daily-temp 
+								img(src=`/${weatherImageList[i]}` width="120" height="110")
+								p.temp-max-min #{searchResults.hourly.temperature_2m[i]}#{searchResults.hourly_units.temperature_2m}
+							.hourly-line-half 
+								.hourly-real-feel
+									p.real-feel 
+									| Real Feel: 
+									span.hr-rf #{searchResults.hourly.apparent_temperature[i]}#{searchResults.hourly_units.apparent_temperature}
+									|
+						.hourly-info-container 
+							.hourly-line-half 
+								p.row 
+									| Relative Humidity: 
+									span.column-right #{searchResults.hourly.relativehumidity_2m[i]}#{searchResults.hourly_units.relativehumidity_2m}
+									|
+								p.row 
+									| Dewpoint: 
+									span.column-right #{searchResults.hourly.dewpoint_2m[i]} #{searchResults.hourly_units.dewpoint_2m}
+									|
+								p.row 
+									| Windspeed: 
+									span.column-right #{searchResults.hourly.windspeed_10m[i]} #{searchResults.hourly_units.windspeed_10m}
+									|
+								p.row 
+									| Sealevel Pressure: 
+									span.column-right #{searchResults.hourly.pressure_msl[i]} #{searchResults.hourly_units.pressure_msl}
+									|
+								p.row 
+									| Surface Pressure: 
+									span.column-right #{searchResults.hourly.surface_pressure[i]} #{searchResults.hourly_units.surface_pressure}
+									|
+							.hourly-line-half 
+								p.row 
+									| Precipitation Probability: 
+									span.column-right #{searchResults.hourly.precipitation_probability[i]}#{searchResults.hourly_units.precipitation_probability}
+									|
+								if (searchResults.hourly.precipitation[i] != 0)
+									p.row 
+										| Precipitation: 
+										span.column-right #{searchResults.hourly.precipitation[i]} in
+										|
+								if (searchResults.hourly.rain[i] != 0)
+									p.row 
+										| Rain: 
+										span.column-right #{searchResults.hourly.rain[i]} in
+										|
+								if (searchResults.hourly.showers[i] != 0)
+									p.row 
+										| Showers: 
+										span.column-right #{searchResults.hourly.showers[i]} in
+										|
+								if (searchResults.hourly.snowfall[i] != 0)
+									p.row 
+										| Snowfall: 
+										span.column-right #{searchResults.hourly.snowfall[i]} in
+										|
+								if (searchResults.hourly.snow_depth[i] != 0)
+									p.row 
+										| Snow Depth: 
+										span.column-right #{searchResults.hourly.snow_depth[i]} #{searchResults.hourly_units.snow_depth}
+										|
+								p.row 
+									| UV Index: 
+									span.column-right #{searchResults.hourly.uv_index[i]}#{searchResults.hourly_units.uv_index}
+									|
+								p.row 
+									| Cloud Cover: 
+									span.column-right #{searchResults.hourly.cloudcover[i]}#{searchResults.hourly_units.cloudcover}
+									|
+								p.row 
+									| Visibility: 
+									span.column-right #{searchResults.hourly.visibility[i]} #{searchResults.hourly_units.visibility}
+									|
+						.daily-info-container-center 
+							p.daily-wc #{weatherCodeList[i]}
+				- }
+			.links
+				a.today(target='_blank' href=`http://localhost:3000/weather?lat=${searchResults.latitude}&lon=${searchResults.longitude}&n=${searchLocation}&n1=${searchLocationSecond}`) Today
+				a.daily(href=`http://localhost:3000/daily?lat=${searchResults.latitude}&lon=${searchResults.longitude}&n=${searchLocation}&n1=${searchLocationSecond}`) Daily
