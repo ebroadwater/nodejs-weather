@@ -1,0 +1,71 @@
+extends default 
+
+block content 
+	header 
+		img(src="/images/wf.png" width="180" height="180")
+		a.logo(href='/') Real Time Weather Forecast
+	
+	.weather-container 
+		h1 #{searchLocation}, #{searchLocationSecond}
+		if !searchResults
+			.result-count 
+				p No results found for your query
+		else 
+			ul.dailyResults
+				- for (var i = 0; i < 7; i++){
+					li.day-card
+						a.daily-date(target='_blank' href=`http://localhost:3000/hourly?lat=${searchResults.latitude}&lon=${searchResults.longitude}&n=${searchLocation}&n1=${searchLocationSecond}&d=${acutalDateList[i]}`) #{dateList[i]}
+						.daily-info-container
+							.daily-temp
+								img(src=`/${weatherImageList[i]}` width="120" height="110")
+								p.temp-max-min
+									| #{searchResults.daily.temperature_2m_max[i]}#{searchResults.daily_units.temperature_2m_max}
+									span.temp-min /#{searchResults.daily.temperature_2m_min[i]}#{searchResults.daily_units.temperature_2m_min}
+									|
+							.line-half
+								.real-feel-temp 
+									p.real-feel 
+										| Real Feel Max: 
+										span.val #{searchResults.daily.apparent_temperature_max[i]}#{searchResults.daily_units.temperature_2m_max}
+										|
+									p.real-feel 
+										| Real Feel Min: 
+										span.val #{searchResults.daily.apparent_temperature_min[i]}#{searchResults.daily_units.temperature_2m_max}
+										|
+								.real-feel-temp 
+									p.sunrise 
+										| Sunrise: 
+										span.sun #{sunriseList[i]}
+										|
+									p.sunset 
+										| Sunset: 
+										span.sun #{sunsetList[i]}
+										|
+						.daily-info-container 
+							.line-half 
+								p.row-top-half 
+									| Max UV Index: 
+									span.val #{searchResults.daily.uv_index_max[i]}
+									|
+								p.row-bottom-half 
+									| Probability of Precipitation: 
+									span.val #{searchResults.daily.precipitation_probability_max[i]}#{searchResults.daily_units.precipitation_probability_max}
+									|
+							.line-half 
+								p.row-top-second-half 
+									| Max Windspeed: 
+									span.val #{searchResults.daily.windspeed_10m_max[i]} #{searchResults.daily_units.windspeed_10m_max}
+									|
+								p.row-bottom-second-half 
+									| Wind Direction: 
+									span.val #{searchResults.daily.winddirection_10m_dominant[i]}#{searchResults.daily_units.winddirection_10m_dominant}
+									|
+						.daily-info-container-center 
+							p.daily-wc #{weatherCodeList[i]}
+
+				- }
+			.links
+				a.today(target='_blank' href=`http://localhost:3000/weather?lat=${searchResults.latitude}&lon=${searchResults.longitude}&n=${searchLocation}&n1=${searchLocationSecond}`) Today
+				a.daily(href=`http://localhost:3000/daily?lat=${searchResults.latitude}&lon=${searchResults.longitude}&n=${searchLocation}&n1=${searchLocationSecond}`) Daily
+				
+				

@@ -1,17 +1,3 @@
-//- Data want: 
-//- - Min and max temperature daily 
-//- - Weather for week 
-//- - Precipitation / sunny levels (cloudly, snowing, etc)
-//- - Humidity 
-//- - Real feel 
-//- - Wind feel 
-
-//- Daily 
-//- https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=uv_index&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,uv_index_max,precipitation_sum,rain_sum,showers_sum,snowfall_sum,precipitation_hours,precipitation_probability_max,windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto
-//- Maybe show initial graphic for week with cloud/sun and min/max temp for each day and wind feel 
-//- Then if click on day, get more info and hourly temp and forecast 
-//-https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation_probability,precipitation,rain,showers,snowfall,weathercode,cloudcover,visibility,windspeed_10m,uv_index&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto
-
 extends default 
 
 block content 
@@ -20,13 +6,13 @@ block content
 		a.logo(href='/') Real Time Weather Forecast
 
 	.weather-container 
-		h1 #{searchLocation}
+		h1.current-title #{searchLocation}, #{searchLocationSecond}
 		if !searchResults
 			.result-count 
 				p No results found for your query
 		else 
 			ul.weatherResults
-				.panel1
+				li.panel1
 					p.cw-title Current Weather 
 					p.date #{date}
 					.current-temp
@@ -34,10 +20,17 @@ block content
 						p.temp #{searchResults.current_weather.temperature}#{searchResults.daily_units.temperature_2m_max}
 					.current-wc 
 						p.weathercode #{weathercode}
-				.panel2
-					p.windspeed Windspeed: #{searchResults.current_weather.windspeed} #{searchResults.daily_units.windspeed_10m_max}
-					p.winddirection Wind Direction: #{searchResults.current_weather.winddirection}#{searchResults.daily_units.winddirection_10m_dominant}
+				li.panel2
+					.windspeed 
+						p 
+							| Windspeed: 
+							span.val #{searchResults.current_weather.windspeed} #{searchResults.daily_units.windspeed_10m_max}
+							|
+					p.winddirection 
+						| Wind Direction: 
+						span.val #{searchResults.current_weather.winddirection}#{searchResults.daily_units.winddirection_10m_dominant}
+						|
 			.links
-				a.hourly(href='/hourly') Hourly
-				a.daily(href='/daily') Daily
+				a.today(href=`http://localhost:3000/weather?lat=${searchResults.latitude}&lon=${searchResults.longitude}&n=${searchLocation}&n1=${searchLocationSecond}`) Today
+				a.daily(target='_blank' href=`http://localhost:3000/daily?lat=${searchResults.latitude}&lon=${searchResults.longitude}&n=${searchLocation}&n1=${searchLocationSecond}`) Daily
 			

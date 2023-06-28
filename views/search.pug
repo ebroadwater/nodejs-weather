@@ -15,7 +15,7 @@ block content
 			ul.searchResults 
 				each place in searchResults.results
 					li.location 
-						a.name(target='_blank' href=`http://localhost:3000/weather?lat=${place.latitude}&lon=${place.longitude}&n=${place.name}`) #{place.name}, #{place.admin1}
+						a.name(target='_blank' href=`http://localhost:3000/weather?lat=${place.latitude}&lon=${place.longitude}&n=${place.name}&n1=${place.admin1}`) #{place.name}, #{place.admin1}
 						if !place.admin3
 							p.info #{place.admin2}
 						else 
