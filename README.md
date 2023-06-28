@@ -1,4 +1,6 @@
 # nodejs-weather
+Practice using Node.js, Express, and Pug
+
 Simple weather website that allows displays the forecast (current, hourly, daily) for the inputed location.
 
 Interacts with external APIs:
