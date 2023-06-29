@@ -247,7 +247,7 @@ app.get('/hourly', async (req, res, next) => {
 		const imgs = [];
 		const hrs = [];
 
-		//d = date selected by user
+		// Date selected by the user 
 		const actualDate = req.query.d;
 
 		var dateParts = actualDate.split('-');
