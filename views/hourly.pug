@@ -13,7 +13,7 @@ block content
 				p No results found for your query
 		else 
 			ul.dailyResults 
-				- for (var i = startIndex; i < 24; i++){
+				- for (var i = startIndex; i < startIndex+24; i++){
 					li.day-card
 						p.daily-date #{hours[i]}
 						.daily-info-container 
@@ -94,5 +94,5 @@ block content
 							p.daily-wc #{weatherCodeList[i]}
 				- }
 			.links
-				a.today(target='_blank' href=`http://localhost:3000/weather?lat=${searchResults.latitude}&lon=${searchResults.longitude}&n=${searchLocation}&n1=${searchLocationSecond}`) Today
+				a.today(href=`http://localhost:3000/weather?lat=${searchResults.latitude}&lon=${searchResults.longitude}&n=${searchLocation}&n1=${searchLocationSecond}`) Today
 				a.daily(href=`http://localhost:3000/daily?lat=${searchResults.latitude}&lon=${searchResults.longitude}&n=${searchLocation}&n1=${searchLocationSecond}`) Daily

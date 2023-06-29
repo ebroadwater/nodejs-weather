@@ -45,16 +45,9 @@ const daysOfWeek = new Map([
 app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
 
-function convertHrsMins(hrs, mins){
-	if (hrs < 10){
-		hrs = "0" + hrs;
-	}
-	if (mins < 10){
-		mins += "0";
-	}
-	return "T" + hrs + ":" + mins;
-}
-function convertHour(hr){
+function convertHour(str){
+	var date = new Date(str);
+	var hr = date.getHours();
 	var time = "AM";
 	if (hr > 12){
 		hr -= 12;
@@ -125,7 +118,6 @@ app.get('/', (req,res) =>{
 		title: 'Real-Time Weather Forecast',
 	})
 });
-//`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=10&language=en&format=json`
 async function searchLocation(query){
 	const response = await axios.get(
 		`https://geocoding-api.open-meteo.com/v1/search?name=${query}`
@@ -255,20 +247,20 @@ app.get('/hourly', async (req, res, next) => {
 		const imgs = [];
 		const hrs = [];
 
+		//d = date selected by user
 		const actualDate = req.query.d;
-		const d = new Date(actualDate);
-		const d1 = new Date(results.current_weather.time);
-		d.setHours(d1.getHours());
-		d.setMinutes(d1.getMinutes());
-		const dateString = actualDate + convertHrsMins(d.getHours(), d.getMinutes());
-		const sIndex = results.hourly.time.indexOf(dateString);
 
-		const dTitle = daysOfWeek.get(d1.getDay()) + ", " + (parseInt(d1.getMonth())+1) + "/" + d1.getDate() + "/" + d1.getFullYear();
+		var dateParts = actualDate.split('-');
+		var d = new Date(dateParts[0], dateParts[1]-1, dateParts[2]);
+		const dTitle = daysOfWeek.get(d.getDay()) + ",  " + dateParts[1] + "/" + dateParts[2] + "/" + dateParts[0];
+
+		const dateString = actualDate + "T00:00";
+		const sIndex = results.hourly.time.indexOf(dateString);
 
 		for (var i = 0; i < results.hourly.time.length; i++){
 			weatherCodes[i] = wc.get(results.hourly.weathercode[i]);
 			imgs[i] = getImage(results.hourly.weathercode[i], results.hourly.is_day[i]);
-			hrs[i] = convertHour(i);
+			hrs[i] = convertHour(results.hourly.time[i]);
 		}
 		res.render('hourly', {
 			title: 'Current Forecast',
